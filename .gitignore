@@ -1,0 +1,22 @@
+# ASP.NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# ASP.NET sensitive config
+appsettings.*.json
+
+# Environment
+.env
+.env.*
+
+# React / Node
+node_modules/
+dist/
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
