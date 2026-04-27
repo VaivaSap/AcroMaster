@@ -8,5 +8,6 @@ public enum Discipline
     Silks,
     Yoga,
     Calisthenics,
+    FlowArts,
     FlexibilityAndMobility
 }
