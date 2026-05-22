@@ -1,5 +1,7 @@
 import { useState } from "react";
 import PinkButton from "../Components/PinkButton";
+import addSkill from '../Services/SkillService';
+import { useParams } from 'react-router-dom';
 
 function AddSkill() {
     const [name, setName] = useState('');
@@ -7,6 +9,28 @@ function AddSkill() {
     const [status, setStatus] = useState('');
     const [mainSkillCategory, setMainSkillCategory] = useState('');
     const [youtubeUrl, setYoutubeUrl] = useState('');
+    const { disciplineName } = useParams();
+
+    const handleSave = async () => {
+
+    const response = await addSkill({ 
+        name, 
+        status, 
+        difficulty, 
+        disciplines: [disciplineName],
+        categories: [mainSkillCategory], 
+        youtubeUrl,  
+        createdAt: new Date().toISOString() });
+
+        if (response.ok) {
+        alert('Skill saved!')
+        setName('')
+        setDifficulty('')
+        setStatus('')
+        setMainSkillCategory('')
+        setYoutubeUrl('')
+    }
+}
 
   return (
     <div className="min-h-screen bg-gray-900 p-4">
@@ -59,10 +83,9 @@ function AddSkill() {
             className="bg-gray-800 text-white rounded p-2 w-full mt-1 border border-gray-600"/>
         </div>
 
-        <PinkButton onClick={() => alert("saving")}>💾</PinkButton>
+        <PinkButton onClick={ handleSave }>💾</PinkButton>
     </div>
   )
 }
-
 
 export default AddSkill; 

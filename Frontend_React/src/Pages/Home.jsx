@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+import { Link, } from 'react-router-dom';
+import DisciplineCard from '../Components/DisciplineCard'
 
 const disciplines = [
   { id: 0, name: 'Acro Yoga', slug:'AcroYoga', image: '/disciplines/AcroYoga.png' },
@@ -19,12 +20,7 @@ function Home() {
         <h1 className="text-lg font-bold mb-4 text-center text-pink-400">Which skill will you focus today?</h1>
         <div className="grid grid-cols-2 gap-1 w-full">
           {disciplines.map(discipline => (
-            <Link to={`/skills/${discipline.slug}`} key={discipline.id}>
-              <div className="rounded-xl overflow-hidden flex flex-col bg-gray-800">
-                <img src={discipline.image} alt={discipline.name} className="w-36 mx-auto aspect-square object-contain rounded-xl" />
-                <span className="mt-1 text-sm font-medium text-center text-white">{discipline.name}</span>
-              </div>
-            </Link>
+            <DisciplineCard key={discipline.id} discipline={discipline} />
           ))}
         </div>
       </div>

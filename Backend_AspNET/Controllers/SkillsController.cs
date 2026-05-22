@@ -17,11 +17,20 @@ public class SkillsController : ControllerBase
 	}
 
 	[HttpGet]
-
 	public async Task<ActionResult<IEnumerable<Skill>>> GetSkills()
 	{
 		var skills = await _db.Skills.ToListAsync();
 
 		return Ok(skills);
 	}
+
+	[HttpPost]
+	public async Task<ActionResult<Skill>> AddSkill([FromBody] Skill skill)
+	{
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+		_db.Skills.Add(skill);
+        await _db.SaveChangesAsync();
+        return Ok(skill);
+    }
 }
