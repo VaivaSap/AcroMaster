@@ -8,3 +8,8 @@ export default async function addSkill(skill)
     console.log(response)
     return response;
 };
+
+export async function getSkillsByDiscipline(disciplineName) {
+    const response = await fetch(`http://localhost:5233/api/skills?discipline=${disciplineName}`)
+    return response.json()
+}

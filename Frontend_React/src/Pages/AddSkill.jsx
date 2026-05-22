@@ -1,7 +1,7 @@
 import { useState } from "react";
 import PinkButton from "../Components/PinkButton";
 import addSkill from '../Services/SkillService';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 function AddSkill() {
     const [name, setName] = useState('');
@@ -10,6 +10,7 @@ function AddSkill() {
     const [mainSkillCategory, setMainSkillCategory] = useState('');
     const [youtubeUrl, setYoutubeUrl] = useState('');
     const { disciplineName } = useParams();
+    const navigate = useNavigate();
 
     const handleSave = async () => {
 
@@ -84,7 +85,9 @@ function AddSkill() {
         </div>
 
         <PinkButton onClick={ handleSave }>💾</PinkButton>
+        <button onClick={() => navigate('/')} className="text-pink-400 mb-4">← Back</button>
     </div>
+    
   )
 }
 

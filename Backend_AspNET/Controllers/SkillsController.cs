@@ -1,7 +1,8 @@
 using Backend_AspNET.Data;
+using Backend_AspNET.DataModels;
+using Backend_AspNET.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Backend_AspNET.DataModels;
 
 
 
@@ -17,10 +18,16 @@ public class SkillsController : ControllerBase
 	}
 
 	[HttpGet]
-	public async Task<ActionResult<IEnumerable<Skill>>> GetSkills()
+	public async Task<ActionResult<IEnumerable<Skill>>> GetSkills([FromQuery] string? discipline)
 	{
-		var skills = await _db.Skills.ToListAsync();
+        var query = _db.Skills.AsQueryable();
 
+        if (!string.IsNullOrEmpty(discipline) && Enum.TryParse<Discipline>(discipline, out var disciplineEnum))
+        {
+            query = query.Where(s => s.Disciplines.Contains(disciplineEnum));
+        }
+
+        var skills = await _db.Skills.ToListAsync();
 		return Ok(skills);
 	}
 
