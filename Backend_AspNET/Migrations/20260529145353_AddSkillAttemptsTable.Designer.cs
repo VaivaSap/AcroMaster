@@ -4,6 +4,7 @@ using Backend_AspNET.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend_AspNET.Migrations
 {
     [DbContext(typeof(AcroMasterDbContext))]
-    partial class AcroMasterDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260529145353_AddSkillAttemptsTable")]
+    partial class AddSkillAttemptsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,7 +95,7 @@ namespace Backend_AspNET.Migrations
 
                     b.HasIndex("SkillId");
 
-                    b.ToTable("SkillAttempts");
+                    b.ToTable("SkillAttempt");
                 });
 
             modelBuilder.Entity("Backend_AspNET.DataModels.SkillAttempt", b =>

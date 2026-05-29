@@ -10,7 +10,7 @@ namespace Backend_AspNET.DataModels
         public ICollection<MainSkillCategory> Categories { get; set; } 
         public Difficulty Difficulty { get; set; }
         public string? YoutubeUrl { get; set; }
-        public List<string>? UserMedia { get; set; }
+        public ICollection<SkillAttempt>? BestAttempts { get; set; }
         public string? Notes { get; set; }
         public SkillStatus Status { get; set; }
         public List<long>? PrerequisiteSkillIds { get; set; }

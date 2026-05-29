@@ -11,4 +11,5 @@ public class AcroMasterDbContext : DbContext
     }
 
     public DbSet<Skill> Skills { get; set; }
+    public DbSet<SkillAttempt> SkillAttempts { get; set; }
 }
