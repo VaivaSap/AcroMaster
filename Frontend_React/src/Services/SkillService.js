@@ -1,8 +1,6 @@
-const API = import.meta.env.VITE_API_URL
-
 export default async function addSkill(skill)
 {
-   const response = await fetch(`${API}/api/skills`, {
+   const response = await fetch(`/api/skills`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(skill)
@@ -12,12 +10,12 @@ export default async function addSkill(skill)
 };
 
 export async function getSkillsByDiscipline(disciplineName) {
-    const response = await fetch(`${API}/api/skills?discipline=${disciplineName}`)
+    const response = await fetch(`/api/skills?discipline=${disciplineName}`)
     return response.json()
 }
 
 export async function updateSkill(id, skill) {
-  const response = await fetch(`${API}/api/skills/${id}`, {
+  const response = await fetch(`/api/skills/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(skill)
