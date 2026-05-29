@@ -40,4 +40,15 @@ public class SkillsController : ControllerBase
         await _db.SaveChangesAsync();
         return Ok(skill);
     }
+
+	[HttpPut]
+    public async Task<ActionResult<Skill>> UpdateSkill(long id, [FromBody] Skill skill)
+	{
+        if (id != skill.Id) return BadRequest();
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        _db.Entry(skill).State = EntityState.Modified;
+        await _db.SaveChangesAsync();
+        return Ok(skill);
+    }
 }
