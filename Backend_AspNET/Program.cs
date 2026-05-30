@@ -1,7 +1,6 @@
 using Backend_AspNET.Data;
 using Microsoft.EntityFrameworkCore;
-using Backend_AspNET.DataModels;
-using Backend_AspNET.Enums;
+using Microsoft.Extensions.FileProviders;
 
 Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +15,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReact", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "http://localhost:5174")
+        policy.WithOrigins("http://localhost:5173", "http://localhost:5174", "http://192.168.1.73:5173")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -32,29 +31,20 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AcroMasterDbContext>();
 
     db.Database.Migrate();
-
-    if (!db.Skills.Any())
-    {
-        db.Skills.AddRange(
-           new Skill
-           {
-               Name = "Martini static",
-               Disciplines = new List<Discipline> { Discipline.Pole },
-               Categories = new List<MainSkillCategory> { MainSkillCategory.Strength },
-               Difficulty = Difficulty.Beginner,
-               Status = SkillStatus.Learning,
-               CreatedAt = DateTime.UtcNow
-           }
-        );
-
-        db.SaveChanges();
-    }
 }
 
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+var uploadPath = app.Configuration["FileStorage:LocalPath"] ?? throw new InvalidOperationException("FileStorage:LocalPath is not configured"); ;
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadPath),
+    RequestPath = "/uploads"
+});
 
 //app.UseHttpsRedirection();
 

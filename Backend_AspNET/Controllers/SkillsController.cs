@@ -51,4 +51,6 @@ public class SkillsController : ControllerBase
         await _db.SaveChangesAsync();
         return Ok(skill);
     }
+
+
 }
