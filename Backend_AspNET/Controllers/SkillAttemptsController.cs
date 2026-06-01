@@ -26,7 +26,7 @@ namespace Backend_AspNET.Controllers
             var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
 
             var uplPath = _configuration["FileStorage:LocalPath"];
-
+            
             if (uplPath == null) return BadRequest("Upload path does not work");
 
             var filePath = Path.Combine(uplPath, fileName);

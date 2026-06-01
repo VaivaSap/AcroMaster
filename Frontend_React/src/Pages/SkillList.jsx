@@ -23,7 +23,7 @@ function SkillList(){
 
             <div className="grid grid-cols-2 gap-2">
                 {filteredSkills.map(skill => (
-                    <SkillCard key={skill.id} skill={skill} />
+                    <SkillCard key={skill.id} skill={skill} disciplineName={disciplineName}/>
                 ))}
             </div>
             <button onClick={() => navigate('/')} className="text-pink-400 mb-4">← Back</button>

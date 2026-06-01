@@ -14,6 +14,11 @@ export async function getSkillsByDiscipline(disciplineName) {
     return response.json()
 }
 
+export async function getSkillById(id) {
+    const response = await fetch(`/api/skills/${id}`)
+    return response.json()
+}
+
 export async function updateSkill(id, skill) {
   const response = await fetch(`/api/skills/${id}`, {
     method: 'PUT',

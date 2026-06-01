@@ -31,7 +31,17 @@ public class SkillsController : ControllerBase
 		return Ok(skills);
 	}
 
-	[HttpPost]
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Skill>> GetSkillById(long id)
+    {
+        var skill = await _db.Skills.FindAsync(id);
+
+        if (skill == null) return NotFound();
+
+        return Ok(skill);
+    }
+
+    [HttpPost]
 	public async Task<ActionResult<Skill>> AddSkill([FromBody] Skill skill)
 	{
         if (!ModelState.IsValid) return BadRequest(ModelState);
