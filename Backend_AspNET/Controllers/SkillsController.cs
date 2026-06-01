@@ -51,7 +51,7 @@ public class SkillsController : ControllerBase
         return Ok(skill);
     }
 
-	[HttpPut]
+	[HttpPut("{id}")]
     public async Task<ActionResult<Skill>> UpdateSkill(long id, [FromBody] Skill skill)
 	{
         if (id != skill.Id) return BadRequest();
