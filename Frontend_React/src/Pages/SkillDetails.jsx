@@ -88,14 +88,14 @@ return(
             </>
           ) : (
             <>
-              <div><span className="text-gray-500">Difficulty:</span> {skill.difficulty}</div>
-              <div><span className="text-gray-500">Category:</span> {skill.categories?.join(', ')}</div>
+              <div><span className="text-gray-500">Difficulty:</span> {localSkill.difficulty}</div>
+              <div><span className="text-gray-500">Category:</span> {localSkill.categories?.join(', ')}</div>
               {skill.youtubeUrl && (
-                <div><a href={skill.youtubeUrl} target="_blank" rel="noreferrer" className="text-pink-400">▶ Example video</a></div>
+                <div><a href={localSkill.youtubeUrl} target="_blank" rel="noreferrer" className="text-pink-400">▶ Trick example</a></div>
               )}
             </>
           )}
         </div>
-        </div>
+      </div>
 )}
 export default SkillDetails;
