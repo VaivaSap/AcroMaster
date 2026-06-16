@@ -10,7 +10,8 @@ export default defineConfig({
   server: {  
     host: true,
     proxy: {
-      '/api': 'http://localhost:5233'
+      '/api': 'http://localhost:5233',
+      '/uploads': 'http://localhost:5233'
     }  
   }
 })

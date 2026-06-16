@@ -19,6 +19,11 @@ export async function getSkillById(id) {
     return response.json()
 }
 
+export async function getSkillAttempts(skillId){
+    const response = await fetch(`/api/skillAttempts/${skillId}`)
+    return response.json()
+}
+
 export async function updateSkill(id, skill) {
   const response = await fetch(`/api/skills/${id}`, {
     method: 'PUT',
@@ -26,4 +31,4 @@ export async function updateSkill(id, skill) {
     body: JSON.stringify(skill)
   });
   return response;
-}
+}        
