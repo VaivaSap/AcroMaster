@@ -123,8 +123,16 @@ function SkillDetails() {
             <input
               type="file"
               accept="image/*"
+              id="fileInput"
+              className="hidden"
               onChange={(e) => setSelectedFile(e.target.files[0])}
             />
+            <label
+              htmlFor="fileInput"
+              className="bg-gray-700 text-pink-400 rounded px-3 py-1 cursor-pointer"
+            >
+              📷 Add photo
+            </label>
             <div className="flex gap-2 mt-1">
               <button
                 onClick={handleSave}
@@ -172,7 +180,8 @@ function SkillDetails() {
                       key={attempt.id}
                       src={attempt.userMediaUrl}
                       className="w-24 h-24 object-cover rounded cursor-pointer"
-                      onClick={() => setSelectedAttemptImage(attempt.userMediaUrl)
+                      onClick={() =>
+                        setSelectedAttemptImage(attempt.userMediaUrl)
                       }
                     />
                   ))}
