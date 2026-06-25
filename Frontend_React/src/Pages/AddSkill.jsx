@@ -25,11 +25,8 @@ function AddSkill() {
 
         if (response.ok) {
         alert('Skill saved!')
-        setName('')
-        setDifficulty('')
-        setStatus('')
-        setMainSkillCategory('')
-        setYoutubeUrl('')
+        const newSkill = await response.json();
+        navigate(`/skills/${disciplineName}/${newSkill.id}`);
     }
 }
 
