@@ -19,11 +19,19 @@ namespace Backend_AspNET.Controllers
         }
 
         [HttpPost]
+        //Max 150MB
+        [RequestSizeLimit(157_286_400)]
         public async Task<IActionResult> UploadPicture([FromForm] IFormFile file, [FromForm] long skillId)
         {
             if (file == null) return BadRequest("No file provided");
 
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".mp4", ".mov", ".webm" };
+
+            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+
+            if (!allowedExtensions.Contains(extension)) return BadRequest("Only image and video files are allowed");
+
+            var fileName = Guid.NewGuid().ToString() + extension;
 
             var uplPath = _configuration["FileStorage:LocalPath"];
             
@@ -64,6 +72,27 @@ namespace Backend_AspNET.Controllers
         {
             var attempts = await _db.SkillAttempts.Where(a => a.SkillId == skillId).ToListAsync();
             return Ok(attempts);
+        }
+
+        [HttpDelete("{skillAttemptId}")]
+
+        public async Task<ActionResult> DeleteUploadedAttempt(long skillAttemptId)
+        {
+            var attempt = await _db.SkillAttempts.FindAsync(skillAttemptId);
+            if (attempt == null) return NotFound();
+
+            var uplPath = _configuration["FileStorage:LocalPath"];
+            var fileName = Path.GetFileName(attempt.UserMediaUrl);
+            var filePath = Path.Combine(uplPath, fileName);
+
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+            }
+
+            _db.SkillAttempts.Remove(attempt);
+            await _db.SaveChangesAsync();
+            return Ok();
         }
     }
 }

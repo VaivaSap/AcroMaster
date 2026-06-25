@@ -15,6 +15,12 @@ function SkillDetails() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedAttemptImage, setSelectedAttemptImage] = useState(null);
 
+  const isVideo = (url) => {
+    return (
+      url.endsWith(".mp4") || url.endsWith(".mov") || url.endsWith(".webm")
+    );
+  };
+
   const [form, setForm] = useState({
     name: "",
     status: "",
@@ -60,6 +66,17 @@ function SkillDetails() {
     if (response.ok) {
       getSkillAttempts(skillId).then(setSkillAttempts);
       setSelectedFile(null);
+    }
+  };
+
+  const handleDeleteAttempt = async (attemptId) => {
+    if (!window.confirm("Delete this attempt?")) return;
+
+    const response = await fetch(`/api/skillattempts/${attemptId}`, {
+      method: "DELETE",
+    });
+    if (response.ok) {
+      getSkillAttempts(skillId).then(setSkillAttempts);
     }
   };
 
@@ -122,30 +139,35 @@ function SkillDetails() {
             />
             <input
               type="file"
-              accept="image/*"
+              accept="image/*, video/*"
               id="fileInput"
               className="hidden"
               onChange={(e) => setSelectedFile(e.target.files[0])}
             />
             <label
               htmlFor="fileInput"
-              className="bg-gray-700 text-pink-400 rounded px-3 py-1 cursor-pointer"
+              className="bg-gray-700 text-pink-400 rounded px-3 py-1 cursor-pointer mt-1 inline-block"
             >
-              📷 Add photo
+              📷 Add media
             </label>
             <div className="flex gap-2 mt-1">
               <button
-                onClick={handleSave}
-                className="bg-pink-400 text-white rounded px-3 py-1"
+                className="border bg-gray-700 border-pink-400 text-pink-400 rounded px-3 py-1 mt-2"
+                onClick={handleUpload}
               >
-                Save
+                Upload
               </button>
-              <button onClick={handleUpload}>Upload</button>
               <button
+                className="border bg-gray-700 border-pink-400 text-pink-400 rounded px-3 py-1 mt-2"
                 onClick={() => setEditing(false)}
-                className="text-gray-400"
               >
                 Cancel
+              </button>
+              <button
+                onClick={handleSave}
+                className="bg-pink-400 text-white rounded px-3 py-1 mt-2"
+              >
+                Save
               </button>
             </div>
           </>
@@ -175,16 +197,41 @@ function SkillDetails() {
               <div className="mt-3">
                 <span className="text-gray-500">Best attempts:</span>
                 <div className="flex gap-2 mt-1">
-                  {skillAttempts.map((attempt) => (
-                    <img
-                      key={attempt.id}
-                      src={attempt.userMediaUrl}
-                      className="w-24 h-24 object-cover rounded cursor-pointer"
-                      onClick={() =>
-                        setSelectedAttemptImage(attempt.userMediaUrl)
-                      }
-                    />
-                  ))}
+                  {skillAttempts.map((attempt) =>
+                    isVideo(attempt.userMediaUrl) ? (
+                      <div key={attempt.id} className="relative">
+                        <video
+                          src={attempt.userMediaUrl}
+                          className="w-24 h-24 object-cover rounded cursor-pointer"
+                          onClick={() =>
+                            setSelectedAttemptImage(attempt.userMediaUrl)
+                          }
+                        />
+                        <button
+                          className="bg-transparent absolute text-white top-0 right-1"
+                          onClick={() => handleDeleteAttempt(attempt.id)}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="relative">
+                        <img
+                          src={attempt.userMediaUrl}
+                          className="w-24 h-24 object-cover rounded cursor-pointer"
+                          onClick={() =>
+                            setSelectedAttemptImage(attempt.userMediaUrl)
+                          }
+                        />
+                        <button
+                          className="bg-transparent absolute top-0 right-1 text-white"
+                          onClick={() => handleDeleteAttempt(attempt.id)}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ),
+                  )}
                 </div>
               </div>
             )}
@@ -193,10 +240,18 @@ function SkillDetails() {
                 className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center"
                 onClick={() => setSelectedAttemptImage(null)}
               >
-                <img
-                  src={selectedAttemptImage}
-                  className="max-w-full max-h-full"
-                />
+                {isVideo(selectedAttemptImage) ? (
+                  <video
+                    src={selectedAttemptImage}
+                    className="max-w-full max-h-full"
+                    controls
+                  />
+                ) : (
+                  <img
+                    src={selectedAttemptImage}
+                    className="max-w-full max-h-full"
+                  />
+                )}
               </div>
             )}
           </>
