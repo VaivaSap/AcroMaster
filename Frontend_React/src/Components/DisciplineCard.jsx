@@ -11,4 +11,4 @@ function DisciplineCard({ discipline }) {
   )
 }
 
-export default DisciplineCard
+export default DisciplineCard;

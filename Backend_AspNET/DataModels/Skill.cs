@@ -1,3 +1,4 @@
+using Backend_AspNET.Data;
 using Backend_AspNET.Enums;
 
 namespace Backend_AspNET.DataModels
@@ -16,6 +17,8 @@ namespace Backend_AspNET.DataModels
         public List<long>? PrerequisiteSkillIds { get; set; }
         public long? ParentSkillId { get; set; }
         public DateTime CreatedAt { get; set; }
-        public ICollection<string>? Tags { get; set; }  
+        public ICollection<string>? Tags { get; set; }
+        public string? UserId { get; set; } = string.Empty;
+        public ApplicationUser? User { get; set; }
     }
 }
