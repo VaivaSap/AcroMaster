@@ -1,7 +1,6 @@
-﻿using Azure.Core;
-using Backend_AspNET.Data;
-using Backend_AspNET.DataModels;
+﻿using Backend_AspNET.Data;
 using Backend_AspNET.DTOs;
+using Backend_AspNET.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,31 +11,67 @@ namespace Backend_AspNET.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly TokenService _tokenService;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public AuthController(UserManager<ApplicationUser> userManager)
+        public AuthController(UserManager<ApplicationUser> userManager, TokenService tokenService, SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
+            _tokenService = tokenService;
+            _signInManager = signInManager;
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<Skill>> Register(RegisterRequest request)
+        public async Task<IActionResult> Register(RegisterRequest request)
         {
+            if (string.IsNullOrEmpty(request.Password))
+            {
+                return BadRequest("Password is required.");
+            }
+
             var user = new ApplicationUser
             {
                 UserName = request.Email,
                 Email = request.Email
             };
 
-            var result = await _userManager.CreateAsync(user);
+            var result = await _userManager.CreateAsync(user, request.Password);
 
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
-            return Ok(new { user.Id, user.Email });
+            await _userManager.AddToRoleAsync(user, "User");
+
+            var token = await _tokenService.GenerateAccessTokenAsync(user);
+
+            return Ok(new { user.Id, user.Email, Token = token });
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginUser(LoginRequest request)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+
+            if (user == null) 
+            { 
+                BadRequest("No valid user data provided"); 
+            }
+
+            var response = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
+
+            if (string.IsNullOrEmpty(request.Password))
+            {
+                return BadRequest("Password is required.");
+            }
+
+            var token = await _tokenService.GenerateAccessTokenAsync(user);
+
+            return Ok(new
+            {
+                user.Id,
+                user.Email,
+                Token = token
+            });
         }
     }
-
-
-
-
 }
