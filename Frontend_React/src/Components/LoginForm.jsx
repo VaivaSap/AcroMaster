@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form"
 import React from "react";
 
-function RegisterForm() {
+function LoginForm() {
   const {
     register,
     handleSubmit,
@@ -13,7 +13,7 @@ function RegisterForm() {
   };
 
 return (
-    <div className="register-form text-white w-3/4 max-w-md py-8 px-6 bg-gray-800 rounded-lg shadow-md">
+    <div className="login-form text-white w-3/4 max-w-md py-8 px-6 bg-gray-800 rounded-lg shadow-md">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4"> 
           <label htmlFor="email" className="block text-white mb-2">
@@ -24,7 +24,7 @@ return (
             placeholder=". . ."
             type="email"
             {...register("email", {
-              required: { 
+              required:             { 
                 value: true, 
                 message: "This field is required" },
               pattern: {
@@ -48,9 +48,7 @@ return (
             type="password"
             {...register("password", { required: { 
                 value: true, 
-                message: "This field is required" } 
-              }
-            )}
+                message: "This field is required" } })}
           />
           {errors.password && <p className="text-pink-400 text-sm">{errors.password.message}</p>}
         </div>
@@ -62,4 +60,4 @@ return (
   );
 }
 
-export default RegisterForm;
+export default LoginForm;
