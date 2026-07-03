@@ -54,15 +54,17 @@ namespace Backend_AspNET.Controllers
 
             if (user == null) 
             { 
-                BadRequest("No valid user data provided"); 
+                return BadRequest("Invalid email or password."); 
+            }
+
+            if (string.IsNullOrEmpty(request.Password))
+            {
+                return BadRequest("Invalid email or password..");
             }
 
             var response = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
 
-            if (string.IsNullOrEmpty(request.Password))
-            {
-                return BadRequest("Password is required.");
-            }
+            if (!response.Succeeded) { return BadRequest("Invalid email or password."); }
 
             var token = await _tokenService.GenerateAccessTokenAsync(user);
 
