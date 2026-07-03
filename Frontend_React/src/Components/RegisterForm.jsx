@@ -1,5 +1,8 @@
 import { useForm } from "react-hook-form"
 import React from "react";
+import { RegisterUser } from "../Services/AuthService";
+import { useNavigate } from "react-router-dom";
+
 
 function RegisterForm() {
   const {
@@ -8,8 +11,22 @@ function RegisterForm() {
     formState: { errors }
   } = useForm();
 
- const onSubmit = (data) => {
-    console.log("data", data);
+  const navigate = useNavigate();
+
+ const onSubmit = async(data) => {
+    const response = await RegisterUser(data);
+
+    if(!response.ok) {
+      const errorData = await response.json();
+      console.error("Registration failed:", errorData);
+      return;
+    }
+
+    const responseData = await response.json();
+    localStorage.setItem("token", responseData.token);
+    console.log("Registration successful:", responseData);
+    alert("Registration successful!");
+    navigate("/");
   };
 
 return (

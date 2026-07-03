@@ -59,7 +59,7 @@ namespace Backend_AspNET.Controllers
 
             if (string.IsNullOrEmpty(request.Password))
             {
-                return BadRequest("Invalid email or password..");
+                return BadRequest("Invalid email or password.");
             }
 
             var response = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
