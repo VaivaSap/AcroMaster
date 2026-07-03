@@ -1,5 +1,7 @@
 import { useForm } from "react-hook-form"
 import React from "react";
+import { LoginUser } from "../Services/AuthService";
+import { useNavigate } from "react-router-dom";
 
 function LoginForm() {
   const {
@@ -8,10 +10,22 @@ function LoginForm() {
     formState: { errors }
   } = useForm();
 
- const onSubmit = (data) => {
-    console.log("data", data);
-  };
+const navigate = useNavigate();
 
+ const onSubmit = async(data) => {
+    const response = await LoginUser(data);
+
+    if(!response.ok) {
+      const errorData = await response.json();
+      console.error("Login failed:", errorData);
+      return;
+    }
+
+    const responseData = await response.json();
+    localStorage.setItem("token", responseData.token);
+    console.log("Login successful:", responseData);
+    navigate("/");
+  };
 return (
     <div className="login-form text-white w-3/4 max-w-md py-8 px-6 bg-gray-800 rounded-lg shadow-md">
       <form onSubmit={handleSubmit(onSubmit)}>
