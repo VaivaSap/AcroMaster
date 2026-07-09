@@ -1,5 +1,6 @@
 import { Link, } from 'react-router-dom';
 import DisciplineCard from '../Components/DisciplineCard'
+import UserMenu from '../Components/UserMenu';
 
 const disciplines = [
   { id: 0, name: 'Acro Yoga', slug:'AcroYoga', image: '/disciplines/AcroYoga.png' },
@@ -16,8 +17,12 @@ const disciplines = [
 function Home() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-2 bg-gray-900">
+     
       <div className="w-full max-w-sm">
-        <h1 className="text-lg font-bold mb-4 text-center text-pink-400">Which skill will you focus on today?</h1>
+        <div className="flex items-center justify-center mb-4">
+          <h1 className="text-lg font-bold mb-4 text-center text-white">Which skill will you focus on today?</h1>
+          <UserMenu />
+        </div>
         <div className="grid grid-cols-2 gap-1 w-full">
           {disciplines.map(discipline => (
             <DisciplineCard key={discipline.id} discipline={discipline} />

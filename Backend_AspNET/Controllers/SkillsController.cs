@@ -1,8 +1,10 @@
 using Backend_AspNET.Data;
 using Backend_AspNET.DataModels;
 using Backend_AspNET.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 
 
@@ -17,7 +19,8 @@ public class SkillsController : ControllerBase
 		_db = db;
 	}
 
-	[HttpGet]
+    [Authorize]
+    [HttpGet]
 	public async Task<ActionResult<IEnumerable<Skill>>> GetSkills([FromQuery] string? discipline)
 	{
         var query = _db.Skills.AsQueryable();
@@ -31,6 +34,7 @@ public class SkillsController : ControllerBase
 		return Ok(skills);
 	}
 
+    [Authorize]
     [HttpGet("{id}")]
     public async Task<ActionResult<Skill>> GetSkillById(long id)
     {
@@ -41,17 +45,21 @@ public class SkillsController : ControllerBase
         return Ok(skill);
     }
 
+    [Authorize]
     [HttpPost]
 	public async Task<ActionResult<Skill>> AddSkill([FromBody] Skill skill)
 	{
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-		_db.Skills.Add(skill);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        skill.UserId = userId;
+        _db.Skills.Add(skill);
         await _db.SaveChangesAsync();
         return Ok(skill);
     }
 
-	[HttpPut("{id}")]
+    [Authorize]
+    [HttpPut("{id}")]
     public async Task<ActionResult<Skill>> UpdateSkill(long id, [FromBody] Skill skill)
 	{
         if (id != skill.Id) return BadRequest();
@@ -61,6 +69,4 @@ public class SkillsController : ControllerBase
         await _db.SaveChangesAsync();
         return Ok(skill);
     }
-
-
 }

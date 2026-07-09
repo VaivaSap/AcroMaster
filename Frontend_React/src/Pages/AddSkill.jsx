@@ -13,6 +13,7 @@ function AddSkill() {
     const navigate = useNavigate();
 
     const handleSave = async () => {
+        try{
 
     const response = await addSkill({ 
         name, 
@@ -29,11 +30,17 @@ function AddSkill() {
         navigate(`/skills/${disciplineName}/${newSkill.id}`);
     }
 }
+    catch (error) {
+        console.error("Save failed:", error);
+        alert('Error saving skill. Please try again.');
+        navigate("/login");
+    }
+
+}
 
   return (
     <div className="min-h-screen bg-gray-900 p-4">
       <h1 className="text-white font-bold mb-2.5">Add Skill</h1>
- 
 
       <div className="text-white mb-2.5">
         <input
@@ -87,5 +94,6 @@ function AddSkill() {
     
   )
 }
+
 
 export default AddSkill; 
