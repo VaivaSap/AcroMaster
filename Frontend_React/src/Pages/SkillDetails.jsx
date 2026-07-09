@@ -5,6 +5,7 @@ import {
   getSkillAttempts,
 } from "../Services/SkillService";
 import { useState, useEffect } from "react";
+import UserMenu from "../Components/UserMenu";
 
 function SkillDetails() {
   const { skillId } = useParams();
@@ -84,10 +85,11 @@ function SkillDetails() {
 
   return (
     <div className="min-h-screen bg-gray-900 p-4">
-      <div className="flex justify-between items-center">
+
         <h1 className="text-white font-bold">{localSkill.name}</h1>
         <button onClick={() => setEditing(true)}>✏️</button>
-      </div>
+        <UserMenu />
+      
 
       <div className="mt-3 border-t border-gray-600 pt-3 text-sm text-gray-300">
         {editing ? (
