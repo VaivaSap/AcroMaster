@@ -38,7 +38,13 @@ namespace Backend_AspNET.Controllers
             var result = await _userManager.CreateAsync(user, request.Password);
 
             if (!result.Succeeded)
+            {
+                if (result.Errors.Any(e => e.Code == "DuplicateEmail" || e.Code == "DuplicateUserName"))
+                {
+                    return BadRequest(new[] { new { code = "DuplicateAccount", description = "Check your email: creating new account not allowed" } });
+                }
                 return BadRequest(result.Errors);
+            }
 
             await _userManager.AddToRoleAsync(user, "User");
 
