@@ -1,7 +1,8 @@
 import { useForm } from "react-hook-form"
 import React from "react";
 import { RegisterUser } from "../Services/AuthService";
-import { useNavigate } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
+import { useState} from "react";
 
 
 function RegisterForm() {
@@ -12,13 +13,15 @@ function RegisterForm() {
   } = useForm();
 
   const navigate = useNavigate();
+  const [registerError, setRegisterError] = useState(null);
 
  const onSubmit = async(data) => {
     const response = await RegisterUser(data);
 
     if(!response.ok) {
-      const errorData = await response.json();
+      const errorData = await response.json()
       console.error("Registration failed:", errorData);
+      setRegisterError(errorData);
       return;
     }
 
@@ -74,6 +77,17 @@ return (
         <button type="submit" className="bg-pink-400 active:bg-pink-500 hover:bg-pink-500 transition-colors text-white font-bold py-1 px-3 rounded">
           Submit
         </button>
+
+        <div className="display-errors mt-4 text-sm text-gray-400">
+        {registerError && (
+          <div className="text-pink-400 text-sm mt-2">
+            {registerError.map((regError) => (
+              <div key={regError.code}>{regError.description}</div>
+            ))}
+          </div>
+        )}
+        </div>
+
       </form>
     </div>
   );

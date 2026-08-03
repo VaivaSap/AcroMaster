@@ -86,10 +86,13 @@ function SkillDetails() {
   return (
     <div className="min-h-screen bg-gray-900 p-4">
 
+     <div className="flex items-center justify-between">
+      <div className="flex items-center gap-2">
         <h1 className="text-white font-bold">{localSkill.name}</h1>
         <button onClick={() => setEditing(true)}>✏️</button>
+      </div>
         <UserMenu />
-      
+    </div>
 
       <div className="mt-3 border-t border-gray-600 pt-3 text-sm text-gray-300">
         {editing ? (
@@ -217,7 +220,7 @@ function SkillDetails() {
                         </button>
                       </div>
                     ) : (
-                      <div className="relative">
+                      <div key={attempt.id} className="relative">
                         <img
                           src={attempt.userMediaUrl}
                           className="w-24 h-24 object-cover rounded cursor-pointer"

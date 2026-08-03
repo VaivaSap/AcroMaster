@@ -38,7 +38,13 @@ namespace Backend_AspNET.Controllers
             var result = await _userManager.CreateAsync(user, request.Password);
 
             if (!result.Succeeded)
+            {
+                if (result.Errors.Any(e => e.Code == "DuplicateEmail" || e.Code == "DuplicateUserName"))
+                {
+                    return BadRequest(new[] { new { code = "DuplicateAccount", description = "Check your email: creating new account not allowed" } });
+                }
                 return BadRequest(result.Errors);
+            }
 
             await _userManager.AddToRoleAsync(user, "User");
 
@@ -50,24 +56,24 @@ namespace Backend_AspNET.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser(LoginRequest request)
         {
-            var user = await _userManager.FindByEmailAsync(request.Email);
-
-            if (user == null) 
-            { 
-                return BadRequest("Invalid email or password."); 
-            }
-
             if (string.IsNullOrEmpty(request.Password))
             {
-                return BadRequest("Invalid email or password.");
+                return BadRequest(new[] { new { code = "InvalidCredentials", description = "Invalid email or password." } });
+            }
+
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if (user == null)
+            {
+                return BadRequest(new[] { new { code = "InvalidCredentials", description = "Invalid email or password." } });
             }
 
             var response = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
-
-            if (!response.Succeeded) { return BadRequest("Invalid email or password."); }
+            if (!response.Succeeded)
+            {
+                return BadRequest(new[] { new { code = "InvalidCredentials", description = "Invalid email or password." } });
+            }
 
             var token = await _tokenService.GenerateAccessTokenAsync(user);
-
             return Ok(new
             {
                 user.Id,

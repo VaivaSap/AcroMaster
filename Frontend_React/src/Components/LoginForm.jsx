@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form"
 import React from "react";
 import { LoginUser } from "../Services/AuthService";
 import { useNavigate } from "react-router-dom";
+import { useState} from "react";
 
 function LoginForm() {
   const {
@@ -11,13 +12,15 @@ function LoginForm() {
   } = useForm();
 
 const navigate = useNavigate();
+  const [loginError, setLoginError] = useState(null);
 
  const onSubmit = async(data) => {
     const response = await LoginUser(data);
 
     if(!response.ok) {
       const errorData = await response.json();
-      console.error("Login failed:", errorData);    
+      console.error("Login failed:", errorData);
+      setLoginError(errorData);
       return;
     }
 
@@ -69,6 +72,17 @@ return (
         <button type="submit" className="bg-pink-400 active:bg-pink-500 hover:bg-pink-500 transition-colors text-white font-bold py-1 px-3 rounded">
           Submit
         </button>
+
+        <div className="display-errors mt-4 text-sm text-gray-400">
+        {loginError && (
+          <div className="text-pink-400 text-sm mt-2">
+            {loginError.map((logError) => (
+              <div key={logError.code}>{logError.description}</div>
+            ))}
+          </div>
+        )}
+        </div>
+
       </form>
     </div>
   );
