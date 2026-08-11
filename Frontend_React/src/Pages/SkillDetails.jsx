@@ -28,6 +28,7 @@ function SkillDetails() {
     difficulty: "",
     categories: [],
     youtubeUrl: "",
+    notes: "",
   });
 
   const handleSave = async () => {
@@ -47,6 +48,7 @@ function SkillDetails() {
         difficulty: data.difficulty,
         categories: data.categories,
         youtubeUrl: data.youtubeUrl || "",
+        notes: data.notes || "",
       });
     });
     getSkillAttempts(skillId).then(setSkillAttempts);
@@ -143,6 +145,12 @@ function SkillDetails() {
               onChange={(e) => setForm({ ...form, youtubeUrl: e.target.value })}
             />
             <input
+              className="bg-gray-700 text-white rounded p-1 w-full mb-2"
+              placeholder="Notes"
+              value={form.notes}
+              onChange={(e) => setForm({ ...form, notes: e.target.value })}
+            />
+            <input
               type="file"
               accept="image/*, video/*"
               id="fileInput"
@@ -197,6 +205,8 @@ function SkillDetails() {
                   ▶ Trick example
                 </a>
               </div>
+              
+
             )}
             {skillAttempts.length > 0 && (
               <div className="mt-3">
@@ -240,6 +250,13 @@ function SkillDetails() {
                 </div>
               </div>
             )}
+
+            {skill.notes && (
+              <div className="mt-3">
+                <span className="text-gray-500">Notes:</span> {skill.notes}
+              </div>
+          )}      
+
             {selectedAttemptImage && (
               <div
                 className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center"

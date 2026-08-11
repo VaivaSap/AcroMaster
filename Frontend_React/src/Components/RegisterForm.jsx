@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form"
 import React from "react";
-import { RegisterUser } from "../Services/AuthService";
+import { registerUser } from "../Services/AuthService";
 import { useNavigate} from "react-router-dom";
 import { useState} from "react";
 
@@ -16,7 +16,7 @@ function RegisterForm() {
   const [registerError, setRegisterError] = useState(null);
 
  const onSubmit = async(data) => {
-    const response = await RegisterUser(data);
+    const response = await registerUser(data);
 
     if(!response.ok) {
       const errorData = await response.json()

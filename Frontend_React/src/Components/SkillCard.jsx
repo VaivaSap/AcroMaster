@@ -38,6 +38,9 @@ function SkillCard({ skill, disciplineName }) {
           {skill.youtubeUrl && (
             <div><a href={skill.youtubeUrl} target="_blank" rel="noreferrer" className="text-pink-400">▶ Trick example</a></div>
           )}
+          {skill.notes && (
+            <div className="line-clamp-2"><span className="text-gray-500">Notes:</span> {skill.notes}</div>
+          )}
         </div>
       )}
     </div>

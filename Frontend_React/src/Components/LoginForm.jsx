@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form"
 import React from "react";
-import { LoginUser } from "../Services/AuthService";
+import { loginUser } from "../Services/AuthService";
 import { useNavigate } from "react-router-dom";
 import { useState} from "react";
 
@@ -15,7 +15,7 @@ const navigate = useNavigate();
   const [loginError, setLoginError] = useState(null);
 
  const onSubmit = async(data) => {
-    const response = await LoginUser(data);
+    const response = await loginUser(data);
 
     if(!response.ok) {
       const errorData = await response.json();
