@@ -9,6 +9,7 @@ function AddSkill() {
     const [status, setStatus] = useState('');
     const [mainSkillCategory, setMainSkillCategory] = useState('');
     const [youtubeUrl, setYoutubeUrl] = useState('');
+    const [notes, setNotes] = useState('');
     const { disciplineName } = useParams();
     const navigate = useNavigate();
 
@@ -22,6 +23,7 @@ function AddSkill() {
         disciplines: [disciplineName],
         categories: [mainSkillCategory], 
         youtubeUrl,  
+        notes,
         createdAt: new Date().toISOString() });
 
         if (response.ok) {
@@ -85,6 +87,14 @@ function AddSkill() {
             placeholder="--Skill Example Link--"
             value={youtubeUrl}
             onChange={(e) => setYoutubeUrl(e.target.value) }   
+            className="bg-gray-800 text-white rounded p-2 w-full mt-1 border border-gray-600"/>
+        </div>
+
+        <div className="text-white mb-2.5 ">
+        <input
+            placeholder="--Notes--"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value) }   
             className="bg-gray-800 text-white rounded p-2 w-full mt-1 border border-gray-600"/>
         </div>
 

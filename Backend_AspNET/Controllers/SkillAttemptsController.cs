@@ -1,7 +1,9 @@
 ﻿using Backend_AspNET.Data;
 using Backend_AspNET.DataModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace Backend_AspNET.Controllers
 {
@@ -18,10 +20,11 @@ namespace Backend_AspNET.Controllers
             _configuration = configuration;
         }
 
+        [Authorize]
         [HttpPost]
         //Max 150MB
         [RequestSizeLimit(157_286_400)]
-        public async Task<IActionResult> UploadPicture([FromForm] IFormFile file, [FromForm] long skillId)
+        public async Task<IActionResult> UploadPicture([FromForm] IFormFile file, [FromForm] long skillId, [FromForm] string? notes)
         {
             if (file == null) return BadRequest("No file provided");
 
@@ -37,7 +40,15 @@ namespace Backend_AspNET.Controllers
             
             if (uplPath == null) return BadRequest("Upload path does not work");
 
-            var existingCount = await _db.SkillAttempts.Where(a => a.SkillId == skillId).CountAsync();
+            var skillAttempts = _db.SkillAttempts.Where(a => a.SkillId == skillId);
+            
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) return Unauthorized();
+
+            var ownedSkill = await GetOwnedSkill(skillId, userId);
+            if (ownedSkill == null) return NotFound();
+
+            var existingCount = await skillAttempts.CountAsync();
 
             if (existingCount >= 3)
             {
@@ -55,6 +66,7 @@ namespace Backend_AspNET.Controllers
             {
                 SkillId = skillId,
                 UserMediaUrl = "/uploads/" + fileName,
+                Notes = notes,
                 DateAdded = DateTime.UtcNow
             };
 
@@ -66,20 +78,35 @@ namespace Backend_AspNET.Controllers
             return Ok(new { url = "/uploads/" + fileName });
         }
 
+        [Authorize]
         [HttpGet("{skillId}")]
 
         public async Task<ActionResult<IEnumerable<SkillAttempt>>> GetAttempts(long skillId)
         {
             var attempts = await _db.SkillAttempts.Where(a => a.SkillId == skillId).ToListAsync();
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) return Unauthorized();
+
+            var ownedSkill = await GetOwnedSkill(skillId, userId);
+            if (ownedSkill == null) return NotFound();
+
             return Ok(attempts);
         }
 
+        [Authorize]
         [HttpDelete("{skillAttemptId}")]
 
         public async Task<ActionResult> DeleteUploadedAttempt(long skillAttemptId)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) return Unauthorized();
+
             var attempt = await _db.SkillAttempts.FindAsync(skillAttemptId);
             if (attempt == null) return NotFound();
+
+            var ownedSkill = await GetOwnedSkill(attempt.SkillId, userId);
+            if (ownedSkill == null) return NotFound();
 
             var uplPath = _configuration["FileStorage:LocalPath"];
             var fileName = Path.GetFileName(attempt.UserMediaUrl);
@@ -93,6 +120,13 @@ namespace Backend_AspNET.Controllers
             _db.SkillAttempts.Remove(attempt);
             await _db.SaveChangesAsync();
             return Ok();
+        }
+
+        private async Task<Skill?> GetOwnedSkill(long skillId, string userId)
+        {
+            var skill = await _db.Skills.FindAsync(skillId);
+            if (skill == null || skill.UserId != userId) return null;
+            return skill;
         }
     }
 }

@@ -38,10 +38,11 @@ public class SkillsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Skill>> GetSkillById(long id)
     {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var skill = await _db.Skills.FindAsync(id);
 
         if (skill == null) return NotFound();
-
+        if (skill.UserId != userId) return NotFound();
         return Ok(skill);
     }
 
@@ -65,6 +66,8 @@ public class SkillsController : ControllerBase
         if (id != skill.Id) return BadRequest();
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        skill.UserId = userId;
         _db.Entry(skill).State = EntityState.Modified;
         await _db.SaveChangesAsync();
         return Ok(skill);
