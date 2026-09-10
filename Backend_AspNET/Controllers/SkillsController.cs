@@ -23,14 +23,17 @@ public class SkillsController : ControllerBase
     [HttpGet]
 	public async Task<ActionResult<IEnumerable<Skill>>> GetSkills([FromQuery] string? discipline)
 	{
-        var query = _db.Skills.AsQueryable();
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null) return Unauthorized();
+
+        var query = _db.Skills.Where(s => s.UserId == userId);
 
         if (!string.IsNullOrEmpty(discipline) && Enum.TryParse<Discipline>(discipline, out var disciplineEnum))
         {
             query = query.Where(s => s.Disciplines.Contains(disciplineEnum));
         }
 
-        var skills = await _db.Skills.ToListAsync();
+        var skills = await query.ToListAsync();
 		return Ok(skills);
 	}
 
