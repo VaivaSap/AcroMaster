@@ -18,9 +18,13 @@ export default async function addSkill(skill)
 
 export async function getSkillsByDiscipline(disciplineName) {
     try {
-        const response = await authFetch(`/api/skills?discipline=${disciplineName}`);
+        const url = disciplineName 
+            ? `/api/skills?discipline=${disciplineName}` 
+            : `/api/skills`;
+        const response = await authFetch(url);
+        
         if (!response.ok) {
-            throw new Error(`Error fetching discipline ${disciplineName}: ${response.statusText}`);
+            throw new Error(`Error fetching skills: ${response.statusText}`);
         }
         return response.json();
     }     
