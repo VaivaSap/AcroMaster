@@ -28,9 +28,9 @@ public class AcroMasterDbContext : IdentityDbContext<ApplicationUser>
                 .HasForeignKey(sp => sp.SkillId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            entity.HasOne(sp => sp.PrerequisiteSkill)
-                .WithMany()
-                .HasForeignKey(sp => sp.PrerequisiteSkillId)
+            entity.HasOne(sp => sp.Skill)
+                .WithMany(s => s.Prerequisites)
+                .HasForeignKey(sp => sp.SkillId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
     }

@@ -75,4 +75,43 @@ public class SkillsController : ControllerBase
         await _db.SaveChangesAsync();
         return Ok(skill);
     }
+
+    [Authorize]
+    [HttpPut("{skillId}/prerequisites")]
+
+    public async Task<ActionResult<Skill>> AddPrerequisites(long skillId, [FromBody] List<long> prerequisiteIds)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var skill = await _db.Skills.FirstOrDefaultAsync(s => s.Id == skillId && s.UserId == userId);
+        if (skill == null) return BadRequest();
+
+        var currentPrerequisites = await _db.SkillPrerequisites
+            .Where(sp => sp.SkillId == skillId)
+            .Select(sp => sp.PrerequisiteSkillId)
+            .ToListAsync();
+
+        var toAdd = prerequisiteIds.Except(currentPrerequisites);
+        var toRemove = currentPrerequisites.Except(prerequisiteIds); 
+
+        var newRows = toAdd.Select(id => new SkillPrerequisite
+        {
+            SkillId = skillId,
+            PrerequisiteSkillId = id
+        });
+        _db.SkillPrerequisites.AddRange(newRows);
+
+        var rowsToRemove = await _db.SkillPrerequisites
+       .Where(sp => sp.SkillId == skillId && toRemove.Contains(sp.PrerequisiteSkillId))
+       .ToListAsync();
+
+        _db.SkillPrerequisites.RemoveRange(rowsToRemove);
+
+        await _db.SaveChangesAsync();
+        var updatedPrerequisites = await _db.SkillPrerequisites
+         .Where(sp => sp.SkillId == skillId)
+         .Select(sp => sp.PrerequisiteSkillId)
+         .ToListAsync();
+
+        return Ok(updatedPrerequisites);
+    }
 }
