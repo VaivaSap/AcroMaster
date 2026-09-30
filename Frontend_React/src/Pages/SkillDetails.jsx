@@ -4,6 +4,7 @@ import {
   updateSkill,
   getSkillAttempts,
   getSkillsByDiscipline,
+  updatePrerequisitesIdsList,
 } from "../Services/SkillService";
 import { useState, useEffect } from "react";
 import UserMenu from "../Components/UserMenu";
@@ -21,6 +22,7 @@ function SkillDetails() {
   const navigate = useNavigate();
   const { disciplineName } = useParams();
   const [availableSkills, setAvailableSkills] = useState([]);
+  const [selectedPrerequisitesIds, setSelectedPrerequisitesIds] = useState([]);
 
   const isVideo = (url) => {
     return (
@@ -42,6 +44,11 @@ function SkillDetails() {
     await updateSkill(localSkill.id, updated);
     setLocalSkill(updated);
     setEditing(false);
+  };
+
+  const savePrerequisitesList = async () => {
+    await updatePrerequisitesIdsList(localSkill.id, selectedPrerequisitesIds);
+    setLocalSkill({ ...localSkill, prerequisites: selectedPrerequisitesIds });
   };
 
   useEffect(() => {
@@ -235,14 +242,23 @@ function SkillDetails() {
                 <h1 className="text-white flex font-bold mb-4 text-center">
                   Prerequisites
                 </h1>
-                <button
-                  className="self-start bg-gray-700 text-pink-400 mb-4 border border-pink-400 rounded px-3 py-2"
-                  onClick={() =>
-                    navigate(`/skills/${disciplineName}/add-skill`)
-                  }
-                >
-                  + Create New Prerequisite
-                </button>
+                <div className="flex not-only-of-type:gap-2 mb-4">
+                  <button
+                    className="bg-gray-700 text-pink-400 mb-4 border border-pink-400 rounded px-3 py-2"
+                    onClick={() =>
+                      navigate(`/skills/${disciplineName}/add-skill`)
+                    }
+                  >
+                    + Create New
+                  </button>
+
+                  <button
+                    className="bg-gray-700 text-pink-400 mb-4 border border-pink-400 rounded px-3 py-2"
+                    onClick={() => savePrerequisitesList()}
+                  >
+                    Save
+                  </button>
+                </div>
 
                 <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-pink-400 scrollbar-track-gray-700 mb-4 border border-gray-700 rounded p-2">
                   {availableSkills
@@ -250,9 +266,19 @@ function SkillDetails() {
                     .map((s) => (
                       <div
                         key={s.id}
-                        className="text-white py-2 px-2 hover:bg-gray-700 cursor-pointer rounded"
+                        className={`text-white py-2 px-2 hover:bg-gray-700 cursor-pointer rounded ${
+                          selectedPrerequisitesIds.includes(s.id)
+                            ? "bg-pink-400"
+                            : ""
+                        }`}
                         onClick={() => {
-                          /* to do */
+                          setSelectedPrerequisitesIds((prevPr) => {
+                            if (prevPr.includes(s.id)) {
+                              return prevPr.filter((id) => id !== s.id);
+                            } else {
+                              return [...prevPr, s.id];
+                            }
+                          });
                         }}
                       >
                         {s.name}
@@ -331,12 +357,6 @@ function SkillDetails() {
                     </div>
                   ))}
                 </div>
-                {/* <button
-              //   className="bg-gray-700 text-pink-400 rounded px-3 py-1 mt-2"
-              //   onClick={(prereqSkillId) => handleAddPrerequisites(prereqSkillId)}
-              // >
-              //   Add Prerequisites
-              </button> */}
               </div>
             )}
 

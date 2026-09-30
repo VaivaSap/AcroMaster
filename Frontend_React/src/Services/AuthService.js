@@ -35,6 +35,7 @@ export async function authFetch(url, options = {}) {
     const response = await fetch(url, {
         ...options,
         headers: {
+          'Content-Type': 'application/json',
             ...authHeaders(),
         }
     });

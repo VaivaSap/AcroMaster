@@ -12,10 +12,9 @@ namespace Backend_AspNET.DataModels
         public Difficulty Difficulty { get; set; }
         public string? YoutubeUrl { get; set; }
         public ICollection<SkillAttempt>? BestAttempts { get; set; }
+        public ICollection<SkillPrerequisite>? Prerequisites { get; set; }
         public string? Notes { get; set; }
         public SkillStatus Status { get; set; }
-        public List<long>? PrerequisiteSkillIds { get; set; }
-        public long? ParentSkillId { get; set; }
         public DateTime CreatedAt { get; set; }
         public ICollection<string>? Tags { get; set; }
         public string? UserId { get; set; } = string.Empty;

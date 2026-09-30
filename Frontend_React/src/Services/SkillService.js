@@ -63,3 +63,16 @@ export async function updateSkill(id, skill) {
   return response;
 }        
 
+export async function updatePrerequisitesIdsList(skillId, prerequisitesIds) {
+    const response = await authFetch(`/api/skills/${skillId}/prerequisites`, {
+        method: 'PUT',
+        body: JSON.stringify(prerequisitesIds)
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error updating prerequisites for skill ${skillId}: ${response.statusText}`);
+    }
+
+    return response;
+}
+
