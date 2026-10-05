@@ -235,13 +235,13 @@ function SkillDetails() {
             )}
 
             {skill.prerequisites && skill.prerequisites.length > 0 && (
-              <p>
-                Prerequisites:{" "}
+              <div>
+                <span className="text-gray-500">Prerequisites: </span>{" "}
                 {skill.prerequisites
                   .map((id) => availableSkills.find((s) => s.id === id)?.name)
                   .filter(Boolean)
                   .join(", ")}
-              </p>
+              </div>
             )}
 
             <button
@@ -375,22 +375,6 @@ function SkillDetails() {
               </div>
             )}
 
-            {skill.prerequisites && skill.prerequisites.length > 0 && (
-              <div className="mt-3">
-                <span className="text-gray-500">Prerequisites:</span>
-                <div className="flex gap-2 mt-1">
-                  {skill.prerequisites.map((prereqId) => (
-                    <div
-                      key={prereqId}
-                      className="bg-gray-700 text-pink-400 rounded px-3 py-1"
-                    >
-                      {availableSkills.find((s) => s.id === prereqId)?.name}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {selectedAttemptImage && (
               <div
                 className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center"
@@ -413,6 +397,9 @@ function SkillDetails() {
           </>
         )}
       </div>
+      <button onClick={() => navigate("/")} className="text-pink-400 mb-4 mt-3">
+        ← Back
+      </button>
     </div>
   );
 }
