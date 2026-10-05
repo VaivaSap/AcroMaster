@@ -14,7 +14,9 @@ public class SkillsController : ControllerBase
 {
 	private readonly AcroMasterDbContext _db;
 
-	public SkillsController(AcroMasterDbContext db)
+    public List<long> Prerequisites { get; private set; }
+
+    public SkillsController(AcroMasterDbContext db)
 	{
 		_db = db;
 	}
@@ -42,11 +44,26 @@ public class SkillsController : ControllerBase
     public async Task<ActionResult<Skill>> GetSkillById(long id)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var skill = await _db.Skills.FindAsync(id);
+        var skill = await _db.Skills
+            .Include(s => s.Prerequisites)
+            .FirstOrDefaultAsync(s => s.Id == id && s.UserId == userId);
 
         if (skill == null) return NotFound();
         if (skill.UserId != userId) return NotFound();
-        return Ok(skill);
+
+        return Ok(new
+        {
+            skill.Id,
+            skill.Name,
+            skill.Difficulty,
+            skill.YoutubeUrl,
+            skill.Notes,
+            skill.Status,
+            skill.CreatedAt,
+            skill.Categories,
+            skill.Disciplines,
+            Prerequisites = skill.Prerequisites.Select(sp => sp.PrerequisiteSkillId).ToList() ?? new List<long>()
+        });
     }
 
     [Authorize]
@@ -57,6 +74,7 @@ public class SkillsController : ControllerBase
 
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         skill.UserId = userId;
+        Prerequisites = new List<long>();
         _db.Skills.Add(skill);
         await _db.SaveChangesAsync();
         return Ok(skill);
