@@ -1,4 +1,6 @@
-﻿namespace Backend_AspNET.DataModels
+﻿using System.Text.Json.Serialization;
+
+namespace Backend_AspNET.DataModels
 {
     public class SkillPrerequisite
     {

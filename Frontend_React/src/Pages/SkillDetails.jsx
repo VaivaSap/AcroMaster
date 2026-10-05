@@ -9,6 +9,7 @@ import {
 import { useState, useEffect } from "react";
 import UserMenu from "../Components/UserMenu";
 import { authHeaders, authFetch } from "../Services/AuthService";
+import MessageBox from "../Components/MessageBox";
 
 function SkillDetails() {
   const { skillId } = useParams();
@@ -23,6 +24,8 @@ function SkillDetails() {
   const { disciplineName } = useParams();
   const [availableSkills, setAvailableSkills] = useState([]);
   const [selectedPrerequisitesIds, setSelectedPrerequisitesIds] = useState([]);
+  const [searchPhrase, setSearchPhrase] = useState("");
+  const [showSavedMessage, setShowSavedMessage] = useState(false);
 
   const isVideo = (url) => {
     return (
@@ -48,7 +51,9 @@ function SkillDetails() {
 
   const savePrerequisitesList = async () => {
     await updatePrerequisitesIdsList(localSkill.id, selectedPrerequisitesIds);
+    console.log("Saving with:", selectedPrerequisitesIds);
     setLocalSkill({ ...localSkill, prerequisites: selectedPrerequisitesIds });
+    setShowSavedMessage(true);
   };
 
   useEffect(() => {
@@ -65,13 +70,16 @@ function SkillDetails() {
       });
     });
     getSkillAttempts(skillId).then(setSkillAttempts);
+    getSkillsByDiscipline().then(setAvailableSkills);
   }, [skillId]);
 
   useEffect(() => {
-    if (isPrereqModalOpen) {
-      getSkillsByDiscipline().then(setAvailableSkills);
+    if (isPrereqModalOpen && localSkill) {
+      console.log("Setting prerequisites from:", localSkill.prerequisites);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSelectedPrerequisitesIds(localSkill.prerequisites || []);
     }
-  }, [isPrereqModalOpen]);
+  }, [isPrereqModalOpen, localSkill]);
 
   const handleUpload = async () => {
     if (!selectedFile) return;
@@ -227,7 +235,13 @@ function SkillDetails() {
             )}
 
             {skill.prerequisites && skill.prerequisites.length > 0 && (
-              <p>Prerequisites: {skill.prerequisites?.join(", ")}</p>
+              <p>
+                Prerequisites:{" "}
+                {skill.prerequisites
+                  .map((id) => availableSkills.find((s) => s.id === id)?.name)
+                  .filter(Boolean)
+                  .join(", ")}
+              </p>
             )}
 
             <button
@@ -242,7 +256,7 @@ function SkillDetails() {
                 <h1 className="text-white flex font-bold mb-4 text-center">
                   Prerequisites
                 </h1>
-                <div className="flex not-only-of-type:gap-2 mb-4">
+                <div className="flex not-only-of-type:gap-2">
                   <button
                     className="bg-gray-700 text-pink-400 mb-4 border border-pink-400 rounded px-3 py-2"
                     onClick={() =>
@@ -260,9 +274,26 @@ function SkillDetails() {
                   </button>
                 </div>
 
+                <MessageBox
+                  open={showSavedMessage}
+                  text="Prerequisites saved!"
+                  onClose={() => setShowSavedMessage(false)}
+                />
+
+                <input
+                  type="text"
+                  placeholder="Search skills"
+                  value={searchPhrase}
+                  onChange={(e) => setSearchPhrase(e.target.value)}
+                  className="bg-gray-700 text-white border border-pink-400 rounded px-3 py-2 mb-3"
+                />
+
                 <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-pink-400 scrollbar-track-gray-700 mb-4 border border-gray-700 rounded p-2">
                   {availableSkills
                     .filter((s) => s.id !== localSkill.id)
+                    .filter((s) =>
+                      s.name.toLowerCase().includes(searchPhrase.toLowerCase()),
+                    )
                     .map((s) => (
                       <div
                         key={s.id}
@@ -353,7 +384,7 @@ function SkillDetails() {
                       key={prereqId}
                       className="bg-gray-700 text-pink-400 rounded px-3 py-1"
                     >
-                      {prereqId}
+                      {availableSkills.find((s) => s.id === prereqId)?.name}
                     </div>
                   ))}
                 </div>
